@@ -144,23 +144,53 @@ pub fn check_model_status(variant: ModelVariant, custom_dir: Option<PathBuf>) ->
     ModelStatus::Ready
 }
 
-/// Download a model from Hugging Face (stub implementation)
+/// Download a model from Hugging Face
 pub async fn download_model(
     variant: ModelVariant,
     custom_dir: Option<PathBuf>,
 ) -> std::result::Result<(), ModelError> {
-    let model_path = get_model_path(variant.clone(), custom_dir)?;
+    let model_path = get_model_path(variant.clone(), custom_dir.clone())?;
+    let config = ModelConfig::from_variant(variant.clone());
 
     // Create model directory
     std::fs::create_dir_all(&model_path)?;
 
-    // TODO: Implement actual model download from Hugging Face
-    // This will use the hf_hub crate to download model files
     log::info!(
-        "Model download stub: Would download {:?} to {:?}",
+        "Downloading model {:?} from {} to {:?}",
         variant,
+        config.hf_repo,
         model_path
     );
+
+    // Run the synchronous download in a blocking task to avoid blocking the async runtime
+    tokio::task::spawn_blocking(move || {
+        // Initialize HF Hub API
+        let api = hf_hub::api::sync::Api::new()
+            .map_err(|e| ModelError::DownloadFailed(format!("Failed to initialize HF Hub API: {}", e)))?;
+
+        let repo = api.model(config.hf_repo.clone());
+
+        // Download each required file
+        for (index, file) in config.files.iter().enumerate() {
+            log::info!("Downloading file {}/{}: {}", index + 1, config.files.len(), file);
+
+            let downloaded_path = repo
+                .get(file)
+                .map_err(|e| ModelError::DownloadFailed(format!("Failed to download {}: {}", file, e)))?;
+
+            // Copy the downloaded file to our model directory
+            let target_path = model_path.join(file);
+            std::fs::copy(&downloaded_path, &target_path)
+                .map_err(|e| ModelError::DownloadFailed(format!("Failed to copy {} to model directory: {}", file, e)))?;
+
+            log::info!("Successfully downloaded: {}", file);
+        }
+
+        log::info!("Model download complete: {:?}", variant);
+        Ok::<(), ModelError>(())
+    })
+    .await
+    .map_err(|e| ModelError::DownloadFailed(format!("Download task failed: {}", e)))??;
 
     Ok(())
 }
