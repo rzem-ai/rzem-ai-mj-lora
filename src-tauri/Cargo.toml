@@ -28,6 +28,8 @@ tokio = { version = "1", features = ["full"] }
 base64 = "0.22"
 anyhow = "1.0"
 dirs = "6.0"
+thiserror = "2.0"
+log = "0.4"
 
 [dev-dependencies]
 tempfile = "3.8"

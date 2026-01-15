@@ -3819,6 +3819,7 @@ dependencies = [
  "anyhow",
  "base64 0.22.1",
  "dirs",
+ "log",
  "reqwest",
  "serde",
  "serde_json",
@@ -3827,6 +3828,7 @@ dependencies = [
  "tauri-plugin-dialog",
  "tauri-plugin-opener",
  "tempfile",
+ "thiserror 2.0.17",
  "tokio",
 ]
 

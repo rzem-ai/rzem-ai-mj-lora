@@ -1,7 +1,19 @@
 use crate::settings::ModelVariant;
 use anyhow::{Context, Result};
 use serde::{Deserialize, Serialize};
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
+use thiserror::Error;
+
+/// Errors that can occur during model operations
+#[derive(Debug, Error)]
+pub enum ModelError {
+    #[error("Model download failed: {0}")]
+    DownloadFailed(String),
+    #[error("IO error: {0}")]
+    IoError(#[from] std::io::Error),
+    #[error("Error: {0}")]
+    Other(#[from] anyhow::Error),
+}
 
 /// Status of a model on the system
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -130,6 +142,72 @@ pub fn check_model_status(variant: ModelVariant, custom_dir: Option<PathBuf>) ->
     }
 
     ModelStatus::Ready
+}
+
+/// Download a model from Hugging Face (stub implementation)
+pub async fn download_model(
+    variant: ModelVariant,
+    custom_dir: Option<PathBuf>,
+) -> std::result::Result<(), ModelError> {
+    let model_path = get_model_path(variant.clone(), custom_dir)?;
+
+    // Create model directory
+    std::fs::create_dir_all(&model_path)?;
+
+    // TODO: Implement actual model download from Hugging Face
+    // This will use the hf_hub crate to download model files
+    log::info!(
+        "Model download stub: Would download {:?} to {:?}",
+        variant,
+        model_path
+    );
+
+    Ok(())
+}
+
+/// Helper function to calculate directory size recursively
+fn dir_size(path: &Path) -> std::io::Result<u64> {
+    let mut total = 0;
+
+    if path.is_dir() {
+        for entry in std::fs::read_dir(path)? {
+            let entry = entry?;
+            let metadata = entry.metadata()?;
+
+            if metadata.is_dir() {
+                total += dir_size(&entry.path())?;
+            } else {
+                total += metadata.len();
+            }
+        }
+    } else if path.is_file() {
+        total = path.metadata()?.len();
+    }
+
+    Ok(total)
+}
+
+/// Clear the model cache and return the number of bytes freed
+pub fn clear_model_cache(custom_dir: Option<PathBuf>) -> std::result::Result<u64, ModelError> {
+    let cache_dir = get_model_cache_dir(custom_dir)?;
+
+    if !cache_dir.exists() {
+        return Ok(0);
+    }
+
+    // Calculate size before removal
+    let bytes_freed = dir_size(&cache_dir)?;
+
+    // Remove the entire cache directory
+    std::fs::remove_dir_all(&cache_dir)?;
+
+    log::info!(
+        "Cleared model cache at {:?}, freed {} bytes",
+        cache_dir,
+        bytes_freed
+    );
+
+    Ok(bytes_freed)
 }
 
 #[cfg(test)]
