@@ -284,6 +284,7 @@
 import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { invoke } from '@tauri-apps/api/core';
+import { message, confirm } from '@tauri-apps/plugin-dialog';
 import { useProjectStore, type AppSettings, type ModelVariant } from '../stores/project';
 
 const store = useProjectStore();
@@ -358,14 +359,19 @@ async function downloadModel() {
     await checkModelStatus();
   } catch (error) {
     console.error('Failed to download model:', error);
-    alert(`Failed to download model: ${error}`);
+    await message(`Failed to download model: ${error}`, { title: 'Download Error', kind: 'error' });
   } finally {
     isDownloading.value = false;
   }
 }
 
 async function clearCache() {
-  if (!confirm('Are you sure you want to clear the model cache? This will delete all downloaded models.')) {
+  const confirmed = await confirm('Are you sure you want to clear the model cache? This will delete all downloaded models.', {
+    title: 'Clear Cache',
+    kind: 'warning'
+  });
+
+  if (!confirmed) {
     return;
   }
 
@@ -373,11 +379,11 @@ async function clearCache() {
   try {
     const bytesFreed = await invoke<number>('clear_model_cache');
     const mbFreed = (bytesFreed / 1024 / 1024).toFixed(2);
-    alert(`Successfully cleared ${mbFreed} MB from cache`);
+    await message(`Successfully cleared ${mbFreed} MB from cache`, { title: 'Cache Cleared', kind: 'info' });
     await checkModelStatus();
   } catch (error) {
     console.error('Failed to clear cache:', error);
-    alert(`Failed to clear cache: ${error}`);
+    await message(`Failed to clear cache: ${error}`, { title: 'Clear Cache Error', kind: 'error' });
   } finally {
     isClearing.value = false;
   }
@@ -392,7 +398,7 @@ async function saveAndGoBack() {
     router.push('/');
   } catch (error) {
     console.error('Failed to save settings:', error);
-    alert(`Failed to save settings: ${error}`);
+    await message(`Failed to save settings: ${error}`, { title: 'Save Error', kind: 'error' });
   } finally {
     isSaving.value = false;
   }
