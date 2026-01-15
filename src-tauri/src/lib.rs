@@ -1,6 +1,7 @@
 mod claude;
 mod file_ops;
 mod image_utils;
+mod settings;
 
 use tauri::command;
 
