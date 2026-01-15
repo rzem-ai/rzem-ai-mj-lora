@@ -17,35 +17,47 @@ impl ModelConfig {
             ModelVariant::Qwen2VL2B => Self {
                 variant,
                 hf_repo: "Qwen/Qwen2-VL-2B-Instruct".to_string(),
+                // TODO: This is a simplified file list for stub implementation.
+                // Real Qwen2-VL models require additional files (preprocessor_config.json,
+                // merges.txt, vocab.json, etc.). Update this when implementing real model
+                // loading in Task 7.
                 files: vec![
                     "model.safetensors".to_string(),
                     "config.json".to_string(),
                     "tokenizer.json".to_string(),
                     "tokenizer_config.json".to_string(),
                 ],
-                total_size_bytes: 2_800_000_000, // ~2.8 GB
+                total_size_bytes: 4_500_000_000, // ~4.5 GB
             },
             ModelVariant::Qwen2VL7B => Self {
                 variant,
                 hf_repo: "Qwen/Qwen2-VL-7B-Instruct".to_string(),
+                // TODO: This is a simplified file list for stub implementation.
+                // Real Qwen2-VL models require additional files (preprocessor_config.json,
+                // merges.txt, vocab.json, etc.). Update this when implementing real model
+                // loading in Task 7.
                 files: vec![
                     "model.safetensors".to_string(),
                     "config.json".to_string(),
                     "tokenizer.json".to_string(),
                     "tokenizer_config.json".to_string(),
                 ],
-                total_size_bytes: 6_500_000_000, // ~6.5 GB
+                total_size_bytes: 15_000_000_000, // ~15 GB
             },
             ModelVariant::Qwen2VL72B => Self {
                 variant,
                 hf_repo: "Qwen/Qwen2-VL-72B-Instruct".to_string(),
+                // TODO: This is a simplified file list for stub implementation.
+                // Real Qwen2-VL models require additional files (preprocessor_config.json,
+                // merges.txt, vocab.json, etc.). Update this when implementing real model
+                // loading in Task 7.
                 files: vec![
                     "model.safetensors".to_string(),
                     "config.json".to_string(),
                     "tokenizer.json".to_string(),
                     "tokenizer_config.json".to_string(),
                 ],
-                total_size_bytes: 45_000_000_000, // ~45 GB
+                total_size_bytes: 146_000_000_000, // ~146 GB
             },
         }
     }
