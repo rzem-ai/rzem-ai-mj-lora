@@ -1,0 +1,83 @@
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap');
+
+@import 'tailwindcss';
+
+@theme inline {
+  --default-font-family: 'Instrument Sans', sans-serif;
+
+  --font-body: 'Instrument Sans', sans-serif;
+  --font-sans: 'Instrument Sans', sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+}
+
+:root {
+  --p-form-field-padding-x: 0.5rem;
+  --p-form-field-padding-y: 0.4rem;
+  --p-form-field-border-radius: var(--radius-lg);
+
+  --p-border-radius-none: 0;
+  --p-border-radius-xs: var(--radius-xs);
+  --p-border-radius-sm: var(--radius-sm);
+  --p-border-radius-md: var(--radius-md);
+  --p-border-radius-lg: var(--radius-lg);
+  --p-border-radius-xl: var(--radius-xl);
+  --p-button-border-radius: var(--radius-lg);
+
+  --p-button-gap: 0.5rem;
+  --p-button-padding-x: 0.55rem;
+  --p-button-padding-y: 0.325rem;
+
+  --p-card-body-padding: 0;
+  --p-card-body-gap: 0;
+  --p-card-border-radius: var(--p-border-radius-lg);
+
+  --tw-ring-inset: '';
+  --tw-ring-offset-width: '';
+  --tw-ring-color: '';
+  --tw-inset-shadow: '';
+  --tw-inset-ring-shadow: '';
+  --tw-ring-offset-shadow: '';
+  --tw-ring-shadow: '';
+  --tw-shadow: '';
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+  font-size: 14px;
+}
+
+body {
+  @apply m-0 text-gray-900;
+}
+
+h1 {
+  @apply text-2xl;
+}
+
+h2 {
+  @apply block text-xl font-semibold;
+}
+
+h3 {
+  @apply text-xl;
+}
+
+.p-card {
+  @apply text-gray-900! rounded shadow bg-gray-50;
+}
+
+.p-card-header {
+  @apply text-xl font-semibold bg-gray-300 rounded-t;
+}
+
+.p-card-body {
+  @apply rounded-b-xl bg-gray-50;
+}
+
+.copy-text {
+  @apply w-full px-2 py-1 text-lg bg-gray-100 border rounded;
+}
