@@ -179,11 +179,11 @@
                 {{ modelStatusMessage }}
               </div>
               <div class="text-xs text-gray-500 dark:text-gray-500 mt-1">
-                Debug: status={{ modelStatus?.status }}, type={{ typeof modelStatus }}
+                Debug: status={{ modelStatus?.status }}, message={{ modelStatus?.message }}
               </div>
             </div>
             <button
-              v-if="modelStatus?.status === 'not_downloaded'"
+              v-if="modelStatus?.status === 'not_downloaded' || modelStatus?.status === 'error'"
               @click="downloadModel"
               :disabled="isDownloading"
               class="px-4 py-2 font-medium text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
