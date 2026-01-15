@@ -178,6 +178,9 @@
               <div class="text-sm text-gray-600 dark:text-gray-400">
                 {{ modelStatusMessage }}
               </div>
+              <div class="text-xs text-gray-500 dark:text-gray-500 mt-1">
+                Debug: status={{ modelStatus?.status }}, type={{ typeof modelStatus }}
+              </div>
             </div>
             <button
               v-if="modelStatus?.status === 'not_downloaded'"
@@ -342,6 +345,7 @@ async function checkModelStatus() {
     const status = await invoke('get_model_status', {
       variant: localSettings.value.offline_model_variant
     });
+    console.log('Model status received:', status);
     modelStatus.value = status;
   } catch (error) {
     console.error('Failed to check model status:', error);
