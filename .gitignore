@@ -28,3 +28,8 @@ lora-training-generator.skill
 
 # Git worktrees
 .worktrees
+
+# Offline mode model cache (if configured locally)
+models/
+.cache/
+local-settings.json

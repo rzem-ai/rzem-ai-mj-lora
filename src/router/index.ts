@@ -3,6 +3,7 @@ import UploadView from '../views/UploadView.vue';
 import AnalysisView from '../views/AnalysisView.vue';
 import BatchEditorView from '../views/BatchEditorView.vue';
 import ExportView from '../views/ExportView.vue';
+import SettingsView from '../views/SettingsView.vue';
 
 const router = createRouter({
   history: createWebHistory(),
@@ -30,6 +31,12 @@ const router = createRouter({
       name: 'export',
       component: ExportView,
       meta: { title: 'Export' },
+    },
+    {
+      path: '/settings',
+      name: 'settings',
+      component: SettingsView,
+      meta: { title: 'Settings' },
     },
   ],
 });

@@ -2,9 +2,19 @@
   <div class="flex flex-col min-h-screen bg-gray-200 resize-container-6">
     <!-- Header -->
     <header class="shadow bg-gray-50">
-      <div class="px-4 py-4">
-        <h1 class="text-2xl font-bold ">LoRA Training Dataset Generator</h1>
-        <p class="mt-1 text-sm text-gray-600">Generate optimized Midjourney permutation batches for LoRA training</p>
+      <div class="flex items-center justify-between px-4 py-4">
+        <div>
+          <h1 class="text-2xl font-bold ">LoRA Training Dataset Generator</h1>
+          <p class="mt-1 text-sm text-gray-600">Generate optimized Midjourney permutation batches for LoRA training</p>
+        </div>
+        <button
+          @click="goToSettings"
+          class="flex items-center gap-2 px-4 py-2 text-gray-700 transition-colors rounded-lg hover:bg-gray-200"
+          title="Settings"
+        >
+          <Settings class="w-5 h-5" />
+          <span class="hidden sm:inline">Settings</span>
+        </button>
       </div>
     </header>
 
@@ -33,7 +43,7 @@ import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useProjectStore } from './stores/project';
 import StepIndicator from './components/StepIndicator.vue';
-import { Eye, FileDown, ImageUp, WandSparkles, SquarePen } from 'lucide-vue-next';
+import { Eye, FileDown, ImageUp, WandSparkles, SquarePen, Settings } from 'lucide-vue-next';
 
 const store = useProjectStore();
 const router = useRouter();
@@ -58,5 +68,9 @@ const goToStep = (step: string) => {
   } else if (step === 'export' && store.hasSpecification) {
     router.push('/export');
   }
+};
+
+const goToSettings = () => {
+  router.push('/settings');
 };
 </script>

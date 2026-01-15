@@ -10,6 +10,24 @@ import { exportAsJSON, exportAsMarkdown } from '../utils/export';
 
 export type Step = 'upload' | 'analysis' | 'batches' | 'export';
 
+// Settings types (matches Rust backend)
+export type AnalysisMode = 'CloudAPI' | 'Offline' | 'Auto';
+export type ModelVariant = 'Qwen2VL2B' | 'Qwen2VL7B' | 'Qwen2VL72B';
+
+export interface AppSettings {
+  analysis_mode: AnalysisMode;
+  offline_model_variant: ModelVariant;
+  model_cache_dir: string | null;
+  auto_fallback: boolean;
+  keep_model_loaded: boolean;
+}
+
+export interface AnalysisResult {
+  data: string;
+  mode_used: string; // "cloud" or "offline"
+  fallback_used: boolean;
+}
+
 export const useProjectStore = defineStore('project', () => {
   // State
   const imagePaths = ref<string[]>([]);
@@ -20,6 +38,9 @@ export const useProjectStore = defineStore('project', () => {
   const isLoading = ref(false);
   const error = ref<string | null>(null);
   const statusMessage = ref<string | null>(null);
+  const settings = ref<AppSettings | null>(null);
+  const lastModeUsed = ref<string | null>(null);
+  const lastFallbackUsed = ref(false);
 
   // Computed
   const hasImages = computed(() => imagePaths.value.length >= 3);
@@ -68,25 +89,42 @@ export const useProjectStore = defineStore('project', () => {
       statusMessage.value = 'Encoding images to base64...';
       await new Promise(resolve => setTimeout(resolve, 100));
 
-      statusMessage.value = 'Sending request to Claude API...';
+      // Determine which mode will be used based on settings
+      const currentSettings = settings.value;
+      const modeHint = currentSettings?.analysis_mode || 'Auto';
+
+      if (modeHint === 'Offline') {
+        statusMessage.value = 'Loading Qwen2-VL model (first time: 10-15s)...';
+      } else {
+        statusMessage.value = 'Sending request to Claude API...';
+      }
       await new Promise(resolve => setTimeout(resolve, 100));
 
       statusMessage.value = 'Analyzing style characteristics...';
 
-      const result = await invoke<string>('analyze_style', {
+      const result = await invoke<AnalysisResult>('analyze_style', {
         imagePaths: imagePaths.value,
         srefCode: String(srefCode.value),
       });
 
+      // Store which mode was actually used
+      lastModeUsed.value = result.mode_used;
+      lastFallbackUsed.value = result.fallback_used;
+
       statusMessage.value = 'Processing response...';
       await new Promise(resolve => setTimeout(resolve, 100));
 
-      const parsed = JSON.parse(result);
+      const parsed = JSON.parse(result.data);
       specification.value = parsed as DatasetSpecification;
       isDirty.value = true;
       currentStep.value = 'analysis';
 
-      statusMessage.value = 'Analysis complete!';
+      // Show appropriate completion message
+      if (result.fallback_used) {
+        statusMessage.value = 'Analysis complete (used offline fallback)!';
+      } else {
+        statusMessage.value = `Analysis complete (${result.mode_used} mode)!`;
+      }
       await new Promise(resolve => setTimeout(resolve, 500));
 
       return specification.value;
@@ -247,6 +285,28 @@ export const useProjectStore = defineStore('project', () => {
     error.value = null;
   }
 
+  // Settings management
+  async function loadSettings() {
+    try {
+      const loadedSettings = await invoke<AppSettings>('get_settings');
+      settings.value = loadedSettings;
+      return loadedSettings;
+    } catch (e) {
+      error.value = e instanceof Error ? e.message : String(e);
+      throw e;
+    }
+  }
+
+  async function saveSettings(newSettings: AppSettings) {
+    try {
+      await invoke('update_settings', { settings: newSettings });
+      settings.value = newSettings;
+    } catch (e) {
+      error.value = e instanceof Error ? e.message : String(e);
+      throw e;
+    }
+  }
+
   return {
     // State
     imagePaths,
@@ -257,6 +317,9 @@ export const useProjectStore = defineStore('project', () => {
     isLoading,
     error,
     statusMessage,
+    settings,
+    lastModeUsed,
+    lastFallbackUsed,
 
     // Computed
     hasImages,
@@ -281,5 +344,7 @@ export const useProjectStore = defineStore('project', () => {
     exportMarkdown,
     goToStep,
     reset,
+    loadSettings,
+    saveSettings,
   };
 });
