@@ -180,7 +180,7 @@
               </div>
             </div>
             <button
-              v-if="modelStatus?.status === 'NotDownloaded'"
+              v-if="modelStatus?.status === 'not_downloaded'"
               @click="downloadModel"
               :disabled="isDownloading"
               class="px-4 py-2 font-medium text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -300,10 +300,10 @@ const modelStatusText = computed(() => {
   if (!modelStatus.value) return 'Unknown';
 
   const status = modelStatus.value.status;
-  if (status === 'NotDownloaded') return 'Not Downloaded';
-  if (status === 'Ready') return 'Ready';
-  if (status === 'Error') return 'Error';
-  if (status === 'Downloading') {
+  if (status === 'not_downloaded') return 'Not Downloaded';
+  if (status === 'ready') return 'Ready';
+  if (status === 'error') return 'Error';
+  if (status === 'downloading') {
     const progress = modelStatus.value.progress_percent || 0;
     return `Downloading (${progress}%)`;
   }
@@ -314,10 +314,10 @@ const modelStatusMessage = computed(() => {
   if (!modelStatus.value) return '';
 
   const status = modelStatus.value.status;
-  if (status === 'NotDownloaded') return 'Model needs to be downloaded before use';
-  if (status === 'Ready') return 'Model is ready for offline analysis';
-  if (status === 'Error') return modelStatus.value.message || 'An error occurred';
-  if (status === 'Downloading') return 'Downloading model files...';
+  if (status === 'not_downloaded') return 'Model needs to be downloaded before use';
+  if (status === 'ready') return 'Model is ready for offline analysis';
+  if (status === 'error') return modelStatus.value.message || 'An error occurred';
+  if (status === 'downloading') return 'Downloading model files...';
   return '';
 });
 
