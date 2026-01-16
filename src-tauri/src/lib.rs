@@ -122,9 +122,12 @@ fn get_model_status(variant: settings::ModelVariant) -> model_manager::ModelStat
 }
 
 #[command]
-async fn download_model(variant: settings::ModelVariant) -> Result<(), String> {
+async fn download_model(
+    app: tauri::AppHandle,
+    variant: settings::ModelVariant,
+) -> Result<(), String> {
     let settings = settings::load_settings().unwrap_or_default();
-    model_manager::download_model(variant, settings.model_cache_dir)
+    model_manager::download_model(variant, settings.model_cache_dir, app)
         .await
         .map_err(|e| format!("Failed to download model: {}", e))
 }

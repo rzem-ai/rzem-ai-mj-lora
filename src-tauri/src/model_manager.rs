@@ -2,7 +2,16 @@ use crate::settings::ModelVariant;
 use anyhow::{Context, Result};
 use serde::{Deserialize, Serialize};
 use std::path::{Path, PathBuf};
+use tauri::Emitter;
 use thiserror::Error;
+
+#[derive(Clone, Serialize)]
+struct DownloadProgress {
+    current_file: usize,
+    total_files: usize,
+    file_name: String,
+    progress_percent: u8,
+}
 
 /// Errors that can occur during model operations
 #[derive(Debug, Error)]
@@ -163,6 +172,7 @@ pub fn check_model_status(variant: ModelVariant, custom_dir: Option<PathBuf>) ->
 pub async fn download_model(
     variant: ModelVariant,
     custom_dir: Option<PathBuf>,
+    app: tauri::AppHandle,
 ) -> std::result::Result<(), ModelError> {
     let model_path = get_model_path(variant.clone(), custom_dir.clone())?;
     let config = ModelConfig::from_variant(variant.clone());
@@ -177,6 +187,8 @@ pub async fn download_model(
         model_path
     );
 
+    let total_files = config.files.len();
+
     // Run the synchronous download in a blocking task to avoid blocking the async runtime
     tokio::task::spawn_blocking(move || {
         // Initialize HF Hub API with proper configuration
@@ -189,7 +201,19 @@ pub async fn download_model(
 
         // Download each required file
         for (index, file) in config.files.iter().enumerate() {
-            log::info!("Downloading file {}/{}: {}", index + 1, config.files.len(), file);
+            let current_file = index + 1;
+            log::info!("Downloading file {}/{}: {}", current_file, total_files, file);
+
+            // Emit progress event at start of file
+            let _ = app.emit(
+                "download-progress",
+                DownloadProgress {
+                    current_file,
+                    total_files,
+                    file_name: file.clone(),
+                    progress_percent: ((current_file as f32 / total_files as f32) * 100.0) as u8,
+                },
+            );
 
             let downloaded_path = repo
                 .get(file)
@@ -202,6 +226,17 @@ pub async fn download_model(
 
             log::info!("Successfully downloaded: {}", file);
         }
+
+        // Emit 100% completion
+        let _ = app.emit(
+            "download-progress",
+            DownloadProgress {
+                current_file: total_files,
+                total_files,
+                file_name: "Complete".to_string(),
+                progress_percent: 100,
+            },
+        );
 
         log::info!("Model download complete: {:?}", variant);
         Ok::<(), ModelError>(())

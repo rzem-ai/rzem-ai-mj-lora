@@ -171,7 +171,7 @@
         <!-- Model Status -->
         <div class="p-4 mt-4 bg-gray-100 rounded-lg dark:bg-gray-700/50">
           <div class="flex items-center justify-between">
-            <div>
+            <div class="flex-1">
               <div class="font-medium text-gray-900 dark:text-white">
                 Model Status: {{ modelStatusText }}
               </div>
@@ -181,12 +181,33 @@
               <div class="text-xs text-gray-500 dark:text-gray-500 mt-1">
                 Debug: status={{ modelStatus?.status }}, message={{ modelStatus?.message }}
               </div>
+
+              <!-- Download Progress -->
+              <div v-if="downloadProgress" class="mt-3">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Downloading: {{ downloadProgress.file_name }}
+                  </span>
+                  <span class="text-sm text-gray-600 dark:text-gray-400">
+                    {{ downloadProgress.current_file }} / {{ downloadProgress.total_files }} files
+                  </span>
+                </div>
+                <div class="w-full bg-gray-300 rounded-full h-2.5 dark:bg-gray-600">
+                  <div
+                    class="bg-blue-600 h-2.5 rounded-full transition-all duration-300"
+                    :style="{ width: downloadProgress.progress_percent + '%' }"
+                  ></div>
+                </div>
+                <div class="mt-1 text-xs text-right text-gray-600 dark:text-gray-400">
+                  {{ downloadProgress.progress_percent }}%
+                </div>
+              </div>
             </div>
             <button
               v-if="modelStatus?.status === 'not_downloaded' || modelStatus?.status === 'error'"
               @click="downloadModel"
               :disabled="isDownloading"
-              class="px-4 py-2 font-medium text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              class="px-4 py-2 ml-4 font-medium text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {{ isDownloading ? 'Downloading...' : 'Download Model' }}
             </button>
@@ -284,11 +305,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { invoke } from '@tauri-apps/api/core';
+import { listen, type UnlistenFn } from '@tauri-apps/api/event';
 import { message, confirm } from '@tauri-apps/plugin-dialog';
 import { useProjectStore, type AppSettings, type ModelVariant } from '../stores/project';
+
+interface DownloadProgress {
+  current_file: number;
+  total_files: number;
+  file_name: string;
+  progress_percent: number;
+}
 
 const store = useProjectStore();
 const router = useRouter();
@@ -299,6 +328,8 @@ const isSaving = ref(false);
 const isDownloading = ref(false);
 const isClearing = ref(false);
 const modelStatus = ref<any>(null);
+const downloadProgress = ref<DownloadProgress | null>(null);
+let unlistenProgress: UnlistenFn | null = null;
 
 const modelStatusText = computed(() => {
   if (!modelStatus.value) return 'Unknown';
@@ -356,6 +387,13 @@ async function downloadModel() {
   if (!localSettings.value) return;
 
   isDownloading.value = true;
+  downloadProgress.value = null;
+
+  // Set up progress listener
+  unlistenProgress = await listen<DownloadProgress>('download-progress', (event) => {
+    downloadProgress.value = event.payload;
+  });
+
   try {
     await invoke('download_model', {
       variant: localSettings.value.offline_model_variant
@@ -366,6 +404,13 @@ async function downloadModel() {
     await message(`Failed to download model: ${error}`, { title: 'Download Error', kind: 'error' });
   } finally {
     isDownloading.value = false;
+    downloadProgress.value = null;
+
+    // Clean up listener
+    if (unlistenProgress) {
+      unlistenProgress();
+      unlistenProgress = null;
+    }
   }
 }
 
@@ -414,5 +459,12 @@ function goBack() {
 
 onMounted(() => {
   loadSettingsData();
+});
+
+onUnmounted(() => {
+  // Clean up progress listener if still active
+  if (unlistenProgress) {
+    unlistenProgress();
+  }
 });
 </script>
