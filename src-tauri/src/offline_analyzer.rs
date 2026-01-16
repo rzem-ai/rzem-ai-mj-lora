@@ -34,9 +34,9 @@ pub fn check_system_requirements(settings: &AppSettings) -> Result<(), OfflineAn
     use crate::settings::ModelVariant;
 
     let required_gb = match settings.offline_model_variant {
-        ModelVariant::Qwen2VL2B => 4.0,
-        ModelVariant::Qwen2VL7B => 12.0,
-        ModelVariant::Qwen2VL72B => 80.0,
+        ModelVariant::Qwen3VL2B => 3.0,   // ~1.9GB model + overhead
+        ModelVariant::Qwen3VL4B => 5.0,   // ~3.3GB model + overhead
+        ModelVariant::Qwen3VL8B => 10.0,  // ~6.1GB model + overhead
     };
 
     let available = get_available_memory_gb();

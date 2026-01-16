@@ -79,76 +79,76 @@
       <div class="p-6 bg-white rounded-lg shadow dark:bg-gray-800">
         <h2 class="mb-4 text-xl font-bold text-gray-900 dark:text-white">Offline Model Variant</h2>
         <p class="mb-6 text-sm text-gray-600 dark:text-gray-400">
-          Choose which Qwen2-VL model to use for offline analysis
+          Choose which Qwen3-VL model to use for offline analysis (GGUF format with llama.cpp)
         </p>
 
         <div class="grid gap-4 md:grid-cols-3">
-          <!-- Qwen2-VL-2B -->
+          <!-- Qwen3-VL-2B -->
           <div
             class="p-4 border-2 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50"
-            :class="localSettings.offline_model_variant === 'Qwen2VL2B' ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-300 dark:border-gray-600'"
-            @click="localSettings.offline_model_variant = 'Qwen2VL2B'"
+            :class="localSettings.offline_model_variant === 'Qwen3VL2B' ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-300 dark:border-gray-600'"
+            @click="localSettings.offline_model_variant = 'Qwen3VL2B'"
           >
             <div class="flex items-start justify-between mb-3">
               <input
                 type="radio"
-                value="Qwen2VL2B"
+                value="Qwen3VL2B"
                 v-model="localSettings.offline_model_variant"
                 class="mt-1"
               />
               <span class="px-2 py-1 text-xs font-medium text-green-700 bg-green-100 rounded dark:bg-green-900/20 dark:text-green-400">
-                Good
+                Fast
               </span>
             </div>
-            <div class="mb-2 font-bold text-gray-900 dark:text-white">Qwen2-VL-2B</div>
+            <div class="mb-2 font-bold text-gray-900 dark:text-white">Qwen3-VL-2B</div>
             <div class="mb-3 text-sm text-gray-600 dark:text-gray-400">
               Fast inference, good quality
             </div>
             <div class="space-y-1 text-xs text-gray-500 dark:text-gray-500">
-              <div>• Size: 4.5 GB</div>
-              <div>• RAM: 4 GB required</div>
+              <div>• Size: 1.9 GB</div>
+              <div>• RAM: 3 GB required</div>
               <div>• Speed: 10-20s</div>
             </div>
           </div>
 
-          <!-- Qwen2-VL-7B -->
+          <!-- Qwen3-VL-4B -->
           <div
             class="p-4 border-2 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50"
-            :class="localSettings.offline_model_variant === 'Qwen2VL7B' ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-300 dark:border-gray-600'"
-            @click="localSettings.offline_model_variant = 'Qwen2VL7B'"
+            :class="localSettings.offline_model_variant === 'Qwen3VL4B' ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-300 dark:border-gray-600'"
+            @click="localSettings.offline_model_variant = 'Qwen3VL4B'"
           >
             <div class="flex items-start justify-between mb-3">
               <input
                 type="radio"
-                value="Qwen2VL7B"
+                value="Qwen3VL4B"
                 v-model="localSettings.offline_model_variant"
                 class="mt-1"
               />
               <span class="px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded dark:bg-blue-900/20 dark:text-blue-400">
-                Better
+                Balanced
               </span>
             </div>
-            <div class="mb-2 font-bold text-gray-900 dark:text-white">Qwen2-VL-7B</div>
+            <div class="mb-2 font-bold text-gray-900 dark:text-white">Qwen3-VL-4B</div>
             <div class="mb-3 text-sm text-gray-600 dark:text-gray-400">
-              Moderate speed, better quality
+              Great balance of speed and quality
             </div>
             <div class="space-y-1 text-xs text-gray-500 dark:text-gray-500">
-              <div>• Size: 15 GB</div>
-              <div>• RAM: 12 GB required</div>
-              <div>• Speed: 30-60s</div>
+              <div>• Size: 3.3 GB</div>
+              <div>• RAM: 5 GB required</div>
+              <div>• Speed: 20-40s</div>
             </div>
           </div>
 
-          <!-- Qwen2-VL-72B -->
+          <!-- Qwen3-VL-8B -->
           <div
             class="p-4 border-2 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50"
-            :class="localSettings.offline_model_variant === 'Qwen2VL72B' ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-300 dark:border-gray-600'"
-            @click="localSettings.offline_model_variant = 'Qwen2VL72B'"
+            :class="localSettings.offline_model_variant === 'Qwen3VL8B' ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-300 dark:border-gray-600'"
+            @click="localSettings.offline_model_variant = 'Qwen3VL8B'"
           >
             <div class="flex items-start justify-between mb-3">
               <input
                 type="radio"
-                value="Qwen2VL72B"
+                value="Qwen3VL8B"
                 v-model="localSettings.offline_model_variant"
                 class="mt-1"
               />
@@ -156,14 +156,14 @@
                 Best
               </span>
             </div>
-            <div class="mb-2 font-bold text-gray-900 dark:text-white">Qwen2-VL-72B</div>
+            <div class="mb-2 font-bold text-gray-900 dark:text-white">Qwen3-VL-8B</div>
             <div class="mb-3 text-sm text-gray-600 dark:text-gray-400">
-              Slow inference, highest quality
+              Highest quality, slower inference
             </div>
             <div class="space-y-1 text-xs text-gray-500 dark:text-gray-500">
-              <div>• Size: 146 GB</div>
-              <div>• RAM: 80 GB required</div>
-              <div>• Speed: 2-5 min</div>
+              <div>• Size: 6.1 GB</div>
+              <div>• RAM: 10 GB required</div>
+              <div>• Speed: 40-80s</div>
             </div>
           </div>
         </div>

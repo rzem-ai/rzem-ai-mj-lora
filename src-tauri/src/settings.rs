@@ -14,15 +14,15 @@ pub enum AnalysisMode {
     Auto,
 }
 
-/// Available Qwen2-VL model variants
+/// Available Qwen3-VL model variants
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub enum ModelVariant {
-    /// 2B parameter model (fastest)
-    Qwen2VL2B,
-    /// 7B parameter model (balanced)
-    Qwen2VL7B,
-    /// 72B parameter model (highest quality)
-    Qwen2VL72B,
+    /// 2B parameter model (fastest, ~1.9GB)
+    Qwen3VL2B,
+    /// 4B parameter model (good balance, ~3.3GB)
+    Qwen3VL4B,
+    /// 8B parameter model (high quality, ~6.1GB)
+    Qwen3VL8B,
 }
 
 /// Application settings for analysis modes
@@ -87,7 +87,7 @@ impl Default for AppSettings {
     fn default() -> Self {
         Self {
             analysis_mode: AnalysisMode::Auto,
-            offline_model_variant: ModelVariant::Qwen2VL2B,
+            offline_model_variant: ModelVariant::Qwen3VL2B,
             model_cache_dir: None,
             auto_fallback: true,
             keep_model_loaded: true,
@@ -104,7 +104,7 @@ mod tests {
         let settings = AppSettings::default();
 
         assert_eq!(settings.analysis_mode, AnalysisMode::Auto);
-        assert_eq!(settings.offline_model_variant, ModelVariant::Qwen2VL2B);
+        assert_eq!(settings.offline_model_variant, ModelVariant::Qwen3VL2B);
         assert_eq!(settings.model_cache_dir, None);
         assert_eq!(settings.auto_fallback, true);
         assert_eq!(settings.keep_model_loaded, true);

@@ -46,65 +46,34 @@ impl ModelConfig {
     /// Create a ModelConfig for the specified variant
     pub fn from_variant(variant: ModelVariant) -> Self {
         match variant {
-            ModelVariant::Qwen2VL2B => Self {
+            ModelVariant::Qwen3VL2B => Self {
                 variant,
-                hf_repo: "Qwen/Qwen2-VL-2B-Instruct".to_string(),
-                // TODO: This is a simplified file list for stub implementation.
-                // Real Qwen2-VL models require additional files (preprocessor_config.json,
-                // merges.txt, vocab.json, etc.). Update this when implementing real model
-                // loading in Task 7.
+                hf_repo: "Qwen/Qwen3-VL-2B-Instruct-GGUF".to_string(),
                 files: vec![
-                    "chat_template.json".to_string(),
-                    "config.json".to_string(),
-                    "generation_config.json".to_string(),
-                    "merges.txt".to_string(),
-                    "model-00001-of-00002.safetensors".to_string(),
-                    "model-00002-of-00002.safetensors".to_string(),
-                    "model.safetensors.index.json".to_string(),
-                    "preprocessor_config.json".to_string(),
-                    "tokenizer.json".to_string(),
-                    "tokenizer_config.json".to_string(),
-                    "vocab.json".to_string(),
+                    // Main model file (Q8_0 quantization for quality)
+                    "Qwen3-VL-2B-Instruct-Q8_0.gguf".to_string(),
+                    // Vision projection file (F16 for quality)
+                    "mmproj-Qwen3-VL-2B-Instruct-F16.gguf".to_string(),
                 ],
-                total_size_bytes: 4_500_000_000, // ~4.5 GB
+                total_size_bytes: 1_900_000_000, // ~1.9 GB
             },
-            ModelVariant::Qwen2VL7B => Self {
+            ModelVariant::Qwen3VL4B => Self {
                 variant,
-                hf_repo: "Qwen/Qwen2-VL-7B-Instruct".to_string(),
+                hf_repo: "Qwen/Qwen3-VL-4B-Instruct-GGUF".to_string(),
                 files: vec![
-                    "chat_template.json".to_string(),
-                    "config.json".to_string(),
-                    "generation_config.json".to_string(),
-                    "merges.txt".to_string(),
-                    "model-00001-of-00004.safetensors".to_string(),
-                    "model-00002-of-00004.safetensors".to_string(),
-                    "model-00003-of-00004.safetensors".to_string(),
-                    "model-00004-of-00004.safetensors".to_string(),
-                    "model.safetensors.index.json".to_string(),
-                    "preprocessor_config.json".to_string(),
-                    "tokenizer.json".to_string(),
-                    "tokenizer_config.json".to_string(),
-                    "vocab.json".to_string(),
+                    "Qwen3-VL-4B-Instruct-Q8_0.gguf".to_string(),
+                    "mmproj-Qwen3-VL-4B-Instruct-F16.gguf".to_string(),
                 ],
-                total_size_bytes: 15_000_000_000, // ~15 GB
+                total_size_bytes: 3_300_000_000, // ~3.3 GB
             },
-            ModelVariant::Qwen2VL72B => Self {
+            ModelVariant::Qwen3VL8B => Self {
                 variant,
-                hf_repo: "Qwen/Qwen2-VL-72B-Instruct".to_string(),
+                hf_repo: "Qwen/Qwen3-VL-8B-Instruct-GGUF".to_string(),
                 files: vec![
-                    "chat_template.json".to_string(),
-                    "config.json".to_string(),
-                    "generation_config.json".to_string(),
-                    "merges.txt".to_string(),
-                    // 72B model has many shards - this is a simplified list
-                    // In production, we'd need to dynamically detect shard count
-                    "model.safetensors.index.json".to_string(),
-                    "preprocessor_config.json".to_string(),
-                    "tokenizer.json".to_string(),
-                    "tokenizer_config.json".to_string(),
-                    "vocab.json".to_string(),
+                    "Qwen3-VL-8B-Instruct-Q8_0.gguf".to_string(),
+                    "mmproj-Qwen3-VL-8B-Instruct-F16.gguf".to_string(),
                 ],
-                total_size_bytes: 146_000_000_000, // ~146 GB
+                total_size_bytes: 6_100_000_000, // ~6.1 GB
             },
         }
     }
@@ -131,9 +100,9 @@ pub fn get_model_cache_dir(custom_dir: Option<PathBuf>) -> Result<PathBuf> {
 pub fn get_model_path(variant: ModelVariant, custom_dir: Option<PathBuf>) -> Result<PathBuf> {
     let cache_dir = get_model_cache_dir(custom_dir)?;
     let variant_name = match variant {
-        ModelVariant::Qwen2VL2B => "qwen2-vl-2b",
-        ModelVariant::Qwen2VL7B => "qwen2-vl-7b",
-        ModelVariant::Qwen2VL72B => "qwen2-vl-72b",
+        ModelVariant::Qwen3VL2B => "qwen3-vl-2b",
+        ModelVariant::Qwen3VL4B => "qwen3-vl-4b",
+        ModelVariant::Qwen3VL8B => "qwen3-vl-8b",
     };
     Ok(cache_dir.join(variant_name))
 }
@@ -298,16 +267,16 @@ mod tests {
 
     #[test]
     fn test_model_config_2b() {
-        let config = ModelConfig::from_variant(ModelVariant::Qwen2VL2B);
-        assert_eq!(config.hf_repo, "Qwen/Qwen2-VL-2B-Instruct");
-        assert_eq!(config.files.len(), 4);
+        let config = ModelConfig::from_variant(ModelVariant::Qwen3VL2B);
+        assert_eq!(config.hf_repo, "Qwen/Qwen3-VL-2B-Instruct-GGUF");
+        assert_eq!(config.files.len(), 2); // GGUF model + mmproj
         assert!(config.total_size_bytes > 0);
     }
 
     #[test]
     fn test_model_path_generation() {
-        let path = get_model_path(ModelVariant::Qwen2VL2B, None).unwrap();
-        assert!(path.to_string_lossy().contains("qwen2-vl-2b"));
+        let path = get_model_path(ModelVariant::Qwen3VL2B, None).unwrap();
+        assert!(path.to_string_lossy().contains("qwen3-vl-2b"));
     }
 
     #[test]
@@ -318,7 +287,7 @@ mod tests {
         let temp_dir = TempDir::new().unwrap();
         let custom_dir = Some(temp_dir.path().to_path_buf());
 
-        let status = check_model_status(ModelVariant::Qwen2VL2B, custom_dir);
+        let status = check_model_status(ModelVariant::Qwen3VL2B, custom_dir);
         assert_eq!(status, ModelStatus::NotDownloaded);
     }
 }
