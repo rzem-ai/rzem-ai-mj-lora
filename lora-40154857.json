@@ -1,0 +1,58 @@
+{
+  "sref_code": "stub-qwen3vl",
+  "style_analysis": {
+    "primary_style": "Development Stub Mode",
+    "era_influence": "Model downloaded successfully, inference pending implementation",
+    "color_palette": [
+      "#1E3A8A",
+      "#3B82F6",
+      "#60A5FA",
+      "#93C5FD"
+    ],
+    "key_characteristics": [
+      "llama.cpp integration ready",
+      "Model files validated and loaded",
+      "Inference pipeline needs completion"
+    ],
+    "best_subjects": [
+      "Once llama-cpp-2 inference is implemented, real style analysis will appear here"
+    ],
+    "avoid_subjects": [
+      "This is stub data for testing the download and initialization flow"
+    ]
+  },
+  "training_recommendations": {
+    "recommended_dataset_size": 120,
+    "optimal_subject_distribution": {
+      "nature": 0.3,
+      "objects": 0.25,
+      "people": 0.2,
+      "abstract": 0.15,
+      "architecture": 0.1
+    }
+  },
+  "permutation_batches": [
+    {
+      "batch_number": 1,
+      "batch_name": "Nature Landscapes",
+      "category": "Stub Example Batch",
+      "image_count": 40,
+      "prompt": "{mountains, forests, lakes, valleys, meadows} with {golden hour, sunset, dawn, overcast, foggy, clear, twilight, storm} --sref stub-qwen3vl",
+      "priority": "high",
+      "notes": "Real batches will be generated after llama.cpp integration"
+    }
+  ],
+  "prompt_guidelines": {
+    "keep_simple": true,
+    "avoid_style_keywords": [
+      "artistic",
+      "stylized",
+      "rendered"
+    ],
+    "recommended_additions": [
+      "lighting",
+      "weather",
+      "time of day"
+    ]
+  }
+}

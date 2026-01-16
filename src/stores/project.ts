@@ -12,7 +12,7 @@ export type Step = 'upload' | 'analysis' | 'batches' | 'export';
 
 // Settings types (matches Rust backend)
 export type AnalysisMode = 'CloudAPI' | 'Offline' | 'Auto';
-export type ModelVariant = 'Qwen2VL2B' | 'Qwen2VL7B' | 'Qwen2VL72B';
+export type ModelVariant = 'Qwen3VL2B' | 'Qwen3VL4B' | 'Qwen3VL8B';
 
 export interface AppSettings {
   analysis_mode: AnalysisMode;

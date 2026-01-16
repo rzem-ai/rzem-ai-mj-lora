@@ -6,6 +6,14 @@
           <ImageUp class="w-5 h-5" />
           <span class="">Upload Style Reference Images</span>
         </div>
+        <button
+          @click="openProject"
+          class="flex items-center gap-2 px-4 py-2 mr-2 font-medium text-white transition-colors bg-purple-600 rounded-lg hover:bg-purple-700"
+          title="Open a saved project"
+        >
+          <FolderOpen class="w-4 h-4" />
+          Open Project
+        </button>
       </div>
     </template>
     <template #content>
@@ -56,9 +64,10 @@ import { useRouter } from 'vue-router';
 import Button from 'primevue/button';
 import Card from 'primevue/card';
 import InputText from 'primevue/inputtext';
-import { ImageUp, WandSparkles } from 'lucide-vue-next';
+import { ImageUp, WandSparkles, FolderOpen } from 'lucide-vue-next';
 import { useProjectStore } from '../stores/project';
 import ImageUploader from '../components/ImageUploader.vue';
+import { open } from '@tauri-apps/plugin-dialog';
 
 const store = useProjectStore();
 const router = useRouter();
@@ -92,6 +101,31 @@ const analyzeStyle = async () => {
     router.push('/analysis');
   } catch (e) {
     console.error('Analysis failed:', e);
+  }
+};
+
+const openProject = async () => {
+  try {
+    const filePath = await open({
+      filters: [
+        {
+          name: 'LoRA Project',
+          extensions: ['lora-project', 'json'],
+        },
+      ],
+      multiple: false,
+    });
+
+    if (filePath && typeof filePath === 'string') {
+      await store.loadProject(filePath);
+      // Navigate to the appropriate view based on what's loaded
+      if (store.specification) {
+        router.push('/batches');
+      }
+    }
+  } catch (e) {
+    console.error('Failed to load project:', e);
+    store.error = e instanceof Error ? e.message : String(e);
   }
 };
 </script>
