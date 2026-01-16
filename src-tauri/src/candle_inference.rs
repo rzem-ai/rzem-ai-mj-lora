@@ -166,13 +166,12 @@ impl Qwen2VLInference {
             "permutation_batches": [
                 {
                     "batch_number": 1,
+                    "batch_name": "Nature Landscapes",
                     "category": "Stub Example Batch",
-                    "description": "Real batches will be generated after llama.cpp integration",
-                    "prompt_template": "{nature scenes} with {lighting} --sref [CODE]",
-                    "subjects": ["mountains", "forests", "lakes", "valleys", "meadows"],
-                    "modifiers": ["golden hour", "sunset", "dawn", "overcast", "foggy", "clear", "twilight", "storm"],
                     "image_count": 40,
-                    "priority": "high"
+                    "prompt": "{mountains, forests, lakes, valleys, meadows} with {golden hour, sunset, dawn, overcast, foggy, clear, twilight, storm} --sref stub-qwen3vl",
+                    "priority": "high",
+                    "notes": "Real batches will be generated after llama.cpp integration"
                 }
             ],
             "prompt_guidelines": {
