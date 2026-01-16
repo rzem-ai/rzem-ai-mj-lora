@@ -15,7 +15,7 @@ export interface StyleAnalysis {
 
 export interface TrainingRecommendations {
   recommended_dataset_size: number;
-  optimal_subject_distribution: Record<string, string>;
+  optimal_subject_distribution: Record<string, number>;
 }
 
 export interface PermutationBatch {

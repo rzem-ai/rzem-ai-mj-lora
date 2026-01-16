@@ -100,7 +100,7 @@ Based on these images, generate a complete LoRA training dataset specification. 
   "training_recommendations": {{
     "recommended_dataset_size": 100,
     "optimal_subject_distribution": {{
-      "category": "percentage"
+      "category": percentage_as_float
     }}
   }},
   "permutation_batches": [

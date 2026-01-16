@@ -174,7 +174,7 @@ export function validateDatasetSpecification(spec: DatasetSpecification): Valida
 
   // Check distribution percentages
   const distribution = spec.training_recommendations.optimal_subject_distribution;
-  const percentages = Object.values(distribution).map(p => parseFloat(p.replace('%', '')));
+  const percentages = Object.values(distribution).map(p => p);
   const total = percentages.reduce((sum, p) => sum + p, 0);
 
   if (Math.abs(total - 100) > 5) {

@@ -62,7 +62,7 @@ export function exportAsMarkdown(spec: DatasetSpecification): string {
 
   lines.push(`### Subject Distribution`);
   Object.entries(spec.training_recommendations.optimal_subject_distribution).forEach(([category, percentage]) => {
-    lines.push(`- **${category}:** ${percentage}`);
+    lines.push(`- **${category}:** ${percentage}%`);
   });
   lines.push(``);
 
