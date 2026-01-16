@@ -156,11 +156,11 @@ impl Qwen2VLInference {
             "training_recommendations": {
                 "recommended_dataset_size": 120,
                 "optimal_subject_distribution": {
-                    "nature": "30%",
-                    "objects": "25%",
-                    "people": "20%",
-                    "abstract": "15%",
-                    "architecture": "10%"
+                    "nature": 0.30,
+                    "objects": 0.25,
+                    "people": 0.20,
+                    "abstract": 0.15,
+                    "architecture": 0.10
                 }
             },
             "permutation_batches": [
